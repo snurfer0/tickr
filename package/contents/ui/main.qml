@@ -119,8 +119,10 @@ PlasmoidItem {
     Timer { interval: root.interval * 1000; running: true; repeat: true; triggeredOnStart: true; onTriggered: root.refresh() }
     Timer { interval: root.dexInterval * 1000; running: true; repeat: true; triggeredOnStart: true; onTriggered: root.pollDex() }
 
+    // Named `updates`, not `updater`: SettingsWindow has an `updater` property, and inside its
+    // declaration below that name would refer to the property itself.
     Updater {
-        id: updater
+        id: updates
         config: root.config
         current: Plasmoid.metaData.version
     }
@@ -136,7 +138,7 @@ PlasmoidItem {
         id: settingsComponent
         SettingsWindow {
             config: root.config
-            updater: updater
+            updater: updates
             onShortcutRequested: Plasmoid.internalAction("configure").trigger()
         }
     }
@@ -206,9 +208,9 @@ PlasmoidItem {
         down: root.colors.down
         fontFamily: root.fontFamily
         tr: text => i18n(text)
-        notice: updater.status === "available" ? i18n("Tickr %1 is available", updater.release.version)
-            : updater.status === "installed" ? i18n("Tickr %1 is installed", updater.release.version) : ""
-        noticeAction: updater.status === "available" ? i18n("Update") : updater.status === "installed" ? i18n("Restart Plasma") : ""
+        notice: updates.status === "available" ? i18n("Tickr %1 is available", updates.release.version)
+            : updates.status === "installed" ? i18n("Tickr %1 is installed", updates.release.version) : ""
+        noticeAction: updates.status === "available" ? i18n("Update") : updates.status === "installed" ? i18n("Restart Plasma") : ""
         // Grow with the content up to a fixed height, then scroll. The minimum matters: Plasma
         // remembers the popup's last size, and a list that got longer would otherwise be cut off.
         Layout.minimumWidth: 320
@@ -221,6 +223,6 @@ PlasmoidItem {
         onRemoved: key => root.setCoins(Tickr.removeCoin(root.config.coins, key))
         onMoved: (from, to) => root.setCoins(Tickr.moveCoin(root.config.coins, from, to))
         onConfigure: root.openSettings(0)
-        onNoticeClicked: updater.status === "available" ? updater.install() : updater.restartPlasma()
+        onNoticeClicked: updates.status === "available" ? updates.install() : updates.restartPlasma()
     }
 }

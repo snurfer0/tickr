@@ -8,7 +8,7 @@
         "Category": "Online Services",
         "Authors": [{ "Name": "snurfer0" }],
         "License": "MIT",
-        "Version": "0.2.0",
+        "Version": "0.2.1",
         "Website": "https://github.com/snurfer0/tickr",
         "BugReportUrl": "https://github.com/snurfer0/tickr/issues"
     },
