@@ -5,7 +5,7 @@
 Crypto prices in the KDE Plasma 6 panel: spot pairs from Binance, perpetuals from Hyperliquid and any
 on-chain token through DexScreener, with a click-to-open list. No account, no API keys.
 
-![Tickr in the panel](docs/panel.png)
+![Tickr in the panel](docs/screenshot-panel.png)
 
 | | |
 |---|---|

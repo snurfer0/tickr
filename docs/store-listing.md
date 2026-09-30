@@ -22,5 +22,5 @@ Tickr puts live crypto prices in the Plasma panel, with a click-to-open list of 
 
 **Files:** `dist/tickr-<version>.plasmoid` from `bun run package` (or the GitHub release).
 
-**Screenshots:** `docs/panel.png`, `docs/list.png`, `docs/settings-coins.png`,
+**Screenshots:** `docs/screenshot-panel.png`, `docs/list.png`, `docs/settings-coins.png`,
 `docs/settings-appearance.png`, `docs/settings-about.png`. **Logo:** `docs/logo.png`.
