@@ -118,3 +118,30 @@ export function describe(coin: Coin): string {
     if (coin.source === "dex") return shortAddress(coin.symbol)
     return `${coin.symbol.slice(0, coin.symbol.length - coin.quote.length)}/${coin.quote} spot`
 }
+
+/** True when the list already holds the coin this entry describes. */
+export function hasCoin(list: string, entry: string): boolean {
+    const [coin] = parseCoins(entry)
+    return coin !== undefined && parseCoins(list).some((c) => c.key === coin.key)
+}
+
+/** The list with the entry's coin appended; unchanged when the entry is invalid or already there. */
+export function addCoin(list: string, entry: string): string {
+    const [coin] = parseCoins(entry)
+    if (coin === undefined || hasCoin(list, entry)) return list
+    return formatCoins([...parseCoins(list), coin])
+}
+
+/** The list without the coin under this key. */
+export function removeCoin(list: string, key: string): string {
+    return formatCoins(parseCoins(list).filter((c) => c.key !== key))
+}
+
+/** The list with the coin at `from` moved to position `to`; unchanged for positions out of range. */
+export function moveCoin(list: string, from: number, to: number): string {
+    const coins = parseCoins(list)
+    const [coin] = coins.splice(from, 1)
+    if (coin === undefined || to < 0 || to > coins.length) return list
+    coins.splice(to, 0, coin)
+    return formatCoins(coins)
+}

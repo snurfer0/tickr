@@ -4,7 +4,8 @@ import QtQuick.Controls as QQC2
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
-// Everything inside the settings window: a section switcher and three scrollable pages.
+// Everything inside the settings window: a section switcher and two scrollable pages. Coins are
+// added, removed and reordered in the popup itself.
 Rectangle {
     id: view
 
@@ -14,10 +15,8 @@ Rectangle {
 
     signal shortcutRequested()
 
-    function focusSearch() { if (section === 0) coins.focusSearch() }
 
     readonly property var sections: [
-        { name: i18n("Coins"), icon: Qt.resolvedUrl("../icons/coins.svg") },
         { name: i18n("Appearance"), icon: Qt.resolvedUrl("../icons/appearance.svg") },
         { name: i18n("About"), icon: Qt.resolvedUrl("../icons/tickr.svg") }
     ]
@@ -107,7 +106,6 @@ Rectangle {
             Layout.fillHeight: true
             currentIndex: view.section
 
-            Page { CoinsPage { id: coins; config: view.config; Layout.fillWidth: true } }
             Page { AppearancePage { config: view.config; Layout.fillWidth: true } }
             Page {
                 AboutPage {

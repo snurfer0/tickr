@@ -16,7 +16,6 @@ Window {
         show()
         raise()
         requestActivate()
-        view.focusSearch()
     }
 
     title: i18n("Tickr Settings")

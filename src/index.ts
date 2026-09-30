@@ -1,6 +1,16 @@
 // Everything the QML side uses. Bundled into package/contents/ui/tickr.mjs by `bun run build`.
 export { binanceUrl, decodeBinance } from "./binance.ts"
-export { bySource, describe, displayName, formatCoins, parseCoins } from "./coins.ts"
+export {
+    addCoin,
+    bySource,
+    describe,
+    displayName,
+    formatCoins,
+    hasCoin,
+    moveCoin,
+    parseCoins,
+    removeCoin,
+} from "./coins.ts"
 export { DEX_MIN_INTERVAL_S, decodeDex, dexUrls } from "./dexscreener.ts"
 export { funding, percent, price, shortAddress } from "./format.ts"
 export { request } from "./http.ts"

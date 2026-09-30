@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test"
 import {
+    addCoin,
     binanceUrl,
     bySource,
     decodeBinance,
@@ -15,11 +16,14 @@ import {
     displayName,
     formatCoins,
     funding,
+    hasCoin,
     installCommand,
     isNewer,
+    moveCoin,
     parseCoins,
     percent,
     price,
+    removeCoin,
     SCHEMES,
     schemeColors,
     searchPerps,
@@ -117,6 +121,29 @@ describe("formatCoins", () => {
         expect(spot && describeCoin(spot)).toBe("ETH/BTC spot")
         expect(perp && describeCoin(perp)).toBe("BTC-USD perpetual")
         expect(token && describeCoin(token)).toBe("EKpQ…zcjm")
+    })
+})
+
+describe("adding from search", () => {
+    test("adds once, keeps order, ignores junk", () => {
+        const list = addCoin("BTC, ETH", "hl:HYPE")
+        expect(list.split("\n")).toEqual(["BTC", "ETH", "hl:HYPE"])
+        expect(addCoin(list, "BTC")).toBe(list)
+        expect(addCoin(list, "nonsense:thing")).toBe(list)
+        expect(hasCoin(list, "binance:BTCUSDT")).toBe(true)
+        expect(hasCoin(list, "hl:BTC")).toBe(false)
+        expect(addCoin("", `dex:solana:${WIF} = WIF`)).toBe(`dex:solana:${WIF} = WIF`)
+    })
+
+    test("remove and move", () => {
+        const list = "BTC\nETH\nhl:HYPE = Hype"
+        expect(removeCoin(list, "binance:ETHUSDT")).toBe("BTC\nhl:HYPE = Hype")
+        expect(removeCoin(list, "nope")).toBe(list)
+        expect(moveCoin(list, 2, 0)).toBe("hl:HYPE = Hype\nBTC\nETH")
+        expect(moveCoin(list, 0, 2)).toBe("ETH\nhl:HYPE = Hype\nBTC")
+        expect(moveCoin(list, 1, 1)).toBe(list)
+        expect(moveCoin(list, 5, 0)).toBe(list)
+        expect(moveCoin(list, 0, 9)).toBe(list)
     })
 })
 

@@ -29,6 +29,7 @@ PlasmoidItem {
         const name = Tickr.displayName(coin, quote)
         const tick = ticks[coin.key]
         return {
+            key: coin.key,
             label: name,
             // In the panel a perp must not look like the spot price next to it.
             panelLabel: coin.tag === "PERP" && !coin.label ? name + " " + i18n("perp") : name,
@@ -172,25 +173,53 @@ PlasmoidItem {
         onClicked: root.expanded = !root.expanded
     }
 
+    CoinSearch {
+        id: search
+        query: root.fullRepresentationItem ? root.fullRepresentationItem.query : ""
+    }
+
+    function setCoins(list) {
+        if (list === config.coins) return
+        config.coins = list
+        if (config.writeConfig) config.writeConfig()
+    }
+
+    // Opening the popup puts the cursor in the search box; closing it clears the search.
+    onExpandedChanged: {
+        if (!fullRepresentationItem) return
+        if (root.expanded) fullRepresentationItem.focusSearch()
+        else fullRepresentationItem.clearSearch()
+    }
+
     fullRepresentation: CoinList {
         rows: root.rows
+        results: search.suggestions.map(hit => Object.assign({}, hit, {
+            added: Tickr.hasCoin(root.config.coins, hit.entry),
+            priceText: Tickr.price(hit.price)
+        }))
+        searching: search.busy
+        failed: search.failed
         online: root.online
         textColor: Kirigami.Theme.textColor
         highlightColor: Kirigami.Theme.highlightColor
         up: root.colors.up
         down: root.colors.down
         fontFamily: root.fontFamily
-        caption: i18n("24 h change")
-        offlineText: i18n("offline")
-        configureText: i18n("Edit coins")
+        tr: text => i18n(text)
         notice: updater.status === "available" ? i18n("Tickr %1 is available", updater.release.version)
             : updater.status === "installed" ? i18n("Tickr %1 is installed", updater.release.version) : ""
         noticeAction: updater.status === "available" ? i18n("Update") : updater.status === "installed" ? i18n("Restart Plasma") : ""
-        Layout.minimumWidth: 300
-        Layout.preferredWidth: 340
-        Layout.minimumHeight: Math.min(implicitHeight, 160)
-        Layout.preferredHeight: Math.min(implicitHeight, 520)
+        // Grow with the content up to a fixed height, then scroll. The minimum matters: Plasma
+        // remembers the popup's last size, and a list that got longer would otherwise be cut off.
+        Layout.minimumWidth: 320
+        Layout.preferredWidth: 360
+        Layout.minimumHeight: Math.min(implicitHeight, 480)
+        Layout.preferredHeight: Math.min(implicitHeight, 480)
+        Layout.maximumHeight: 480
         onOpened: url => Qt.openUrlExternally(url)
+        onAdded: entry => root.setCoins(Tickr.addCoin(root.config.coins, entry))
+        onRemoved: key => root.setCoins(Tickr.removeCoin(root.config.coins, key))
+        onMoved: (from, to) => root.setCoins(Tickr.moveCoin(root.config.coins, from, to))
         onConfigure: root.openSettings(0)
         onNoticeClicked: updater.status === "available" ? updater.install() : updater.restartPlasma()
     }
