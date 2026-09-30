@@ -22,6 +22,9 @@ on-chain token through DexScreener, with a click-to-open list. No account, no AP
 
 ## Install
 
+From the [KDE Store](https://store.kde.org/p/2376395/): right-click the panel → Add Widgets →
+Get New Widgets → Download New Plasma Widgets, and search for Tickr.
+
 From a release file:
 
 ```sh
