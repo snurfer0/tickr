@@ -1,0 +1,16 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Id": "io.github.snurfer0.tickr",
+        "Name": "Tickr",
+        "Description": "Crypto prices in the panel: Binance spot, Hyperliquid perps and any on-chain token via DexScreener. No API keys.",
+        "Icon": "office-chart-line",
+        "Category": "Online Services",
+        "Authors": [{ "Name": "snurfer0" }],
+        "License": "MIT",
+        "Version": "0.1.0",
+        "Website": "https://github.com/snurfer0/tickr",
+        "BugReportUrl": "https://github.com/snurfer0/tickr/issues"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}

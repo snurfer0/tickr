@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Appearance</title>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b57bff"/>
+      <stop offset="1" stop-color="#6a4dff"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#g)"/>
+  <!-- a palette: three colour wells and a thumb hole -->
+  <path d="M32 15c-10 0-18 7.4-18 16.6S22 49 32 49c2.6 0 4-1.6 4-3.6 0-2.2-1.6-3-1.6-5 0-1.8 1.4-3.2 3.4-3.2H42c4.6 0 8-3.4 8-8C50 21.4 42 15 32 15z" fill="#fff"/>
+  <circle cx="23" cy="30" r="3.2" fill="#ff6b6b"/>
+  <circle cx="29" cy="22.5" r="3.2" fill="#ffc24a"/>
+  <circle cx="38.5" cy="22.5" r="3.2" fill="#4ade80"/>
+  <circle cx="44" cy="29" r="3.2" fill="#4da3ff"/>
+</svg>

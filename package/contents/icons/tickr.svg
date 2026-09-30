@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <title>Tickr</title>
+  <!-- Concept: the up-tick in negative space. A solid mint tile cut edge to edge by a dark
+       channel (14 units, ~2 px at 16 px) that steps up once through the exact centre. -->
+  <rect width="128" height="128" rx="28" fill="#3ee0a3"/>
+  <path fill="#0a1611" d="M0 73h57V41h71v14H71v32H0z"/>
+</svg>

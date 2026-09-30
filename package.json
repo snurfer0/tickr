@@ -1,0 +1,24 @@
+{
+    "name": "tickr",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Crypto ticker for the KDE Plasma panel: spot, perps and on-chain tokens",
+    "license": "MIT",
+    "type": "module",
+    "scripts": {
+        "build": "bun build src/index.ts --format=esm --outfile=package/contents/ui/tickr.mjs",
+        "typecheck": "tsc -p tsconfig.json && tsc -p test/tsconfig.json",
+        "lint": "biome check .",
+        "format": "biome check --write .",
+        "test": "bun test test/unit.test.ts",
+        "test:live": "bun test test/live.test.ts",
+        "test:qml": "bun run build && python3 test/qml_load.py",
+        "check": "bun run typecheck && bun run lint && bun run test && bun run test:qml",
+        "package": "sh scripts/package.sh"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "^2.5.14",
+        "@types/bun": "^1.4.2",
+        "typescript": "^7.0.2"
+    }
+}

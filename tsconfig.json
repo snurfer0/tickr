@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        // The bundle runs in Plasma's QML JavaScript engine: keep syntax and library use to ES2016.
+        "target": "ES2016",
+        "lib": ["ES2016"],
+        "types": [],
+        "module": "Preserve",
+        "moduleResolution": "Bundler",
+        "noEmit": true,
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "verbatimModuleSyntax": true,
+        "allowImportingTsExtensions": true,
+        "skipLibCheck": true
+    },
+    "include": ["src"]
+}

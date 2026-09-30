@@ -1,0 +1,13 @@
+{
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "files": { "includes": ["**", "!package/contents/ui/tickr.mjs"] },
+    "formatter": { "indentStyle": "space", "indentWidth": 4, "lineWidth": 120 },
+    "javascript": { "formatter": { "semicolons": "asNeeded", "quoteStyle": "double" } },
+    "linter": {
+        "rules": {
+            "preset": "recommended",
+            "suspicious": { "noExplicitAny": "error" },
+            "style": { "noNonNullAssertion": "error", "useConst": "error" }
+        }
+    }
+}

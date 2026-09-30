@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+    <kcfgfile name=""/>
+    <group name="General">
+        <!-- The coin list as text, one entry per line. Edited through the Coins page, never by hand. -->
+        <entry name="coins" type="String">
+            <default>BTC, ETH, SOL</default>
+        </entry>
+        <entry name="interval" type="Int">
+            <default>10</default>
+            <min>3</min>
+        </entry>
+        <entry name="panelCount" type="Int">
+            <default>0</default>
+            <min>0</min>
+        </entry>
+        <entry name="checkUpdates" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="autoUpdate" type="Bool">
+            <default>true</default>
+        </entry>
+        <!-- Milliseconds since 1970, as text: too large for an Int. -->
+        <entry name="lastUpdateCheck" type="String">
+            <default>0</default>
+        </entry>
+    </group>
+    <group name="Appearance">
+        <entry name="scheme" type="String">
+            <default>classic</default>
+        </entry>
+        <entry name="upColor" type="String">
+            <default>#4ade80</default>
+        </entry>
+        <entry name="downColor" type="String">
+            <default>#f87171</default>
+        </entry>
+        <entry name="fontFamily" type="String">
+            <default></default>
+        </entry>
+        <entry name="fontSize" type="Int">
+            <default>13</default>
+            <min>9</min>
+            <max>24</max>
+        </entry>
+        <entry name="bold" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="spacing" type="Int">
+            <default>16</default>
+            <min>6</min>
+            <max>40</max>
+        </entry>
+        <entry name="showLabel" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="showChange" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="flash" type="Bool">
+            <default>true</default>
+        </entry>
+    </group>
+</kcfg>

@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - run: bun run lint
+      - run: bun run test
+      # The QML engine test (bun run test:qml) needs Qt 6 and runs locally, not here.
+      - run: bun run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tickr-plasmoid
+          path: dist/*.plasmoid
