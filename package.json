@@ -1,6 +1,6 @@
 {
     "name": "tickr",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "private": true,
     "description": "Crypto ticker for the KDE Plasma panel: spot, perps and on-chain tokens",
     "license": "MIT",
