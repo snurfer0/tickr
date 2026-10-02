@@ -6,7 +6,7 @@ import "../package/contents/ui"
 // off-screen by preview.py.
 Rectangle {
     id: stage
-    width: 800; height: 560
+    width: 830; height: 560
     color: "#15171c"
 
     readonly property var rows: [
@@ -15,7 +15,7 @@ Rectangle {
         { label: "SOL", panelLabel: "SOL", tag: "SPOT", price: "120.00", change: 2.2, changeText: "+2.20%", detail: "", url: "x", known: true, stale: false },
         { label: "XMR", panelLabel: "XMR perp", tag: "PERP", price: "545.15", change: 0.66, changeText: "+0.66%", detail: "+0.0013%/h", url: "x", known: true, stale: false },
         { label: "WIF", panelLabel: "WIF", tag: "DEX", price: "0.2536", change: 5.55, changeText: "+5.55%", detail: "", url: "x", known: true, stale: false },
-        { label: "BONK", panelLabel: "BONK", tag: "DEX", price: "0.0₅3867", change: 5.89, changeText: "+5.89%", detail: "", url: "x", known: true, stale: false }
+        { label: "BONK", panelLabel: "BONK", tag: "DEX", price: "0.0₅3867", change: 5.89, changeText: "+5.89%", detail: "", url: "x", known: true, stale: false, hidden: true }
     ]
     readonly property var results: [
         { entry: "PEPE", title: "PEPE", subtitle: "PEPE/USDT spot", tag: "SPOT", chain: "", price: 0.00000443, priceText: "0.0₅443", added: false },
@@ -25,7 +25,7 @@ Rectangle {
     ]
 
     Rectangle {                       // stand-in for the panel
-        x: 20; y: 16; width: 760; height: 36; radius: 8; color: "#22252c"
+        x: 20; y: 16; width: 790; height: 36; radius: 8; color: "#22252c"
         PanelRow {
             anchors { left: parent.left; verticalCenter: parent.verticalCenter }
             width: implicitWidth; height: parent.height
@@ -34,11 +34,11 @@ Rectangle {
     }
     Rectangle {
         objectName: "popup"
-        x: 20; y: 68; width: 360; height: Math.min(coins.implicitHeight, 480); radius: 10; color: "#22252c"
+        x: 20; y: 68; width: 380; height: Math.min(coins.implicitHeight, 480); radius: 10; color: "#22252c"
         CoinList { id: coins; anchors.fill: parent; rows: stage.rows }
     }
     Rectangle {
-        x: 410; y: 68; width: 360; height: Math.min(found.implicitHeight, 480); radius: 10; color: "#22252c"
+        x: 430; y: 68; width: 380; height: Math.min(found.implicitHeight, 480); radius: 10; color: "#22252c"
         CoinList { id: found; anchors.fill: parent; rows: stage.rows; results: stage.results; searching: true }
         Component.onCompleted: found.focusSearch()
     }

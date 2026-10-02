@@ -15,6 +15,8 @@ export interface Coin {
     quote: string
     /** Text shown in the panel. Empty means "use the name the feed reports". */
     label: string
+    /** Kept in the list but left out of the panel. */
+    hidden: boolean
 }
 
 export interface Quote {
