@@ -32,6 +32,7 @@ Item {
     signal opened(string url)
     signal added(string entry)
     signal removed(string key)
+    signal toggled(string key)           // shown in the panel ↔ hidden from it
     signal moved(int from, int to)
     signal configure()
     signal noticeClicked()
@@ -55,7 +56,7 @@ Item {
     readonly property int bodyHeight: typing
         ? results.length * resultHeight + (statusText !== "" ? 34 : 0)
         : rows.length * rowHeight + 26
-    implicitWidth: 360
+    implicitWidth: 380
     implicitHeight: 10 + field.height + 8 + banner.height + bodyHeight + 12 + footer.height
 
     // ---- footer: name, connection state and settings, kept quiet ----
@@ -194,7 +195,8 @@ Item {
         }
     }
 
-    // ---- the ticker's coins: click for the chart, drag a row to reorder, × to remove ----
+    // ---- the ticker's coins: click for the chart, drag a row to reorder, the eye to keep a coin
+    // out of the panel, × to remove ----
     // While a row is dragged, `order` holds the positions as they will be after the drop, so the
     // list rearranges live; the change is committed once, on release.
     property var order: null
@@ -224,7 +226,7 @@ Item {
     // Column widths shared by the headers and the rows, so they line up.
     readonly property int priceWidth: 92
     readonly property int changeWidth: 58
-    readonly property int removeWidth: 20
+    readonly property int buttonWidth: 20
 
     RowLayout {
         id: columns
@@ -235,7 +237,7 @@ Item {
         ColumnTitle { text: list.tr("Ticker"); Layout.fillWidth: true }
         ColumnTitle { text: list.tr("Price"); horizontalAlignment: Text.AlignRight; Layout.preferredWidth: list.priceWidth }
         ColumnTitle { text: list.tr("24h"); horizontalAlignment: Text.AlignRight; Layout.preferredWidth: list.changeWidth }
-        Item { Layout.preferredWidth: list.removeWidth }
+        Item { Layout.preferredWidth: 2 * list.buttonWidth }
     }
 
     ListView {
@@ -253,7 +255,7 @@ Item {
             required property int index
             readonly property var row: list.shown[index] || {}
             readonly property bool lifted: list.order !== null && list.order[index] === list.dragging
-            readonly property bool hovered: containsMouse || remove.containsMouse
+            readonly property bool hovered: containsMouse || toggle.containsMouse || remove.containsMouse
             property real pressY: 0
             property bool dragged: false
             width: ListView.view.width
@@ -288,7 +290,7 @@ Item {
             RowLayout {
                 anchors { fill: parent; leftMargin: 18; rightMargin: 8 }
                 spacing: 8
-                opacity: line.row.stale ? 0.45 : 1
+                opacity: line.row.stale || line.row.hidden ? 0.45 : 1
 
                 Text {
                     text: line.row.label || ""
@@ -339,21 +341,40 @@ Item {
                     horizontalAlignment: Text.AlignRight
                     Layout.preferredWidth: list.changeWidth
                 }
-                // Remove: always takes its space, so the columns do not jump on hover.
-                MouseArea {
-                    id: remove
-                    Layout.preferredWidth: list.removeWidth
+                // Hide and remove: always shown, faint until the pointer is on them.
+                Row {
+                    Layout.preferredWidth: 2 * list.buttonWidth
                     Layout.preferredHeight: 20
-                    hoverEnabled: true
-                    cursorShape: Qt.PointingHandCursor
-                    enabled: line.hovered && list.dragging < 0
-                    onClicked: list.removed(line.row.key)
-                    Kirigami.Icon {
-                        anchors.centerIn: parent
-                        width: 14; height: 14
-                        source: "window-close-symbolic"
-                        color: remove.containsMouse ? "#f87171" : list.textColor
-                        opacity: !line.hovered || list.dragging >= 0 ? 0 : remove.containsMouse ? 1 : 0.5
+
+                    MouseArea {
+                        id: toggle
+                        width: list.buttonWidth; height: parent.height
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        enabled: list.dragging < 0
+                        onClicked: list.toggled(line.row.key)
+                        Kirigami.Icon {
+                            anchors.centerIn: parent
+                            width: 14; height: 14
+                            source: line.row.hidden ? "view-hidden-symbolic" : "view-visible-symbolic"
+                            color: toggle.containsMouse ? list.highlightColor : list.textColor
+                            opacity: list.dragging >= 0 ? 0 : toggle.containsMouse ? 1 : 0.5
+                        }
+                    }
+                    MouseArea {
+                        id: remove
+                        width: list.buttonWidth; height: parent.height
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        enabled: list.dragging < 0
+                        onClicked: list.removed(line.row.key)
+                        Kirigami.Icon {
+                            anchors.centerIn: parent
+                            width: 14; height: 14
+                            source: "window-close-symbolic"
+                            color: remove.containsMouse ? "#f87171" : list.textColor
+                            opacity: list.dragging >= 0 ? 0 : remove.containsMouse ? 1 : 0.5
+                        }
                     }
                 }
             }

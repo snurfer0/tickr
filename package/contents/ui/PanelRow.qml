@@ -8,6 +8,7 @@ MouseArea {
 
     property var rows: []
     property bool vertical: false         // in a vertical panel there is no room for text
+    readonly property bool blank: rows.length === 0   // no coins, or every coin hidden
     property bool showLabel: true
     property bool showChange: true
     property bool flash: true
@@ -30,12 +31,13 @@ MouseArea {
     Layout.maximumWidth: Layout.minimumWidth
     cursorShape: Qt.PointingHandCursor
 
+    // Stands in for the prices, so the widget never shrinks to nothing clickable.
     Text {
-        visible: strip.vertical
+        visible: strip.vertical || strip.blank
         anchors.centerIn: parent
         text: "₿"
         color: strip.textColor
-        font.pixelSize: Math.round(strip.width * 0.5)
+        font.pixelSize: strip.vertical ? Math.round(strip.width * 0.5) : strip.fontSize
     }
 
     Row {

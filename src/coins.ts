@@ -4,6 +4,9 @@ import type { Coin, Quote, Source } from "./types.ts"
 /** Dollar stablecoins: pairs against these are written without a slash (BTCUSDC). */
 export const STABLES = ["USDT", "USDC", "FDUSD"]
 
+/** In front of an entry: the coin stays in the list but is left out of the panel. */
+const HIDDEN = "!"
+
 /**
  * Reads the coin list. One coin per line or comma separated, `#` starts a comment:
  *
@@ -11,7 +14,8 @@ export const STABLES = ["USDT", "USDC", "FDUSD"]
  *     hl:BTC                                     perpetual on Hyperliquid
  *     dex:solana:<token address>                 any token DexScreener tracks, by chain and address
  *
- * `= NAME` at the end overrides the label shown. Unknown sources and duplicates are dropped.
+ * `= NAME` at the end overrides the label shown, `!` in front hides the coin from the panel.
+ * Unknown sources and duplicates are dropped.
  */
 export function parseCoins(text: string): Coin[] {
     const coins: Coin[] = []
@@ -28,6 +32,13 @@ export function parseCoins(text: string): Coin[] {
 }
 
 function parseEntry(entry: string): Coin | null {
+    const hidden = entry.startsWith(HIDDEN)
+    const coin = parseSource(hidden ? entry.slice(HIDDEN.length).trim() : entry)
+    if (coin !== null) coin.hidden = hidden
+    return coin
+}
+
+function parseSource(entry: string): Coin | null {
     if (entry === "") return null
     const eq = entry.lastIndexOf("=")
     const label = eq > 0 ? entry.slice(eq + 1).trim() : ""
@@ -78,7 +89,7 @@ const TAGS = { binance: "SPOT", hl: "PERP", dex: "DEX" } as const
 
 function coin(source: Source, symbol: string, chain: string, label: string, quote = ""): Coin {
     const key = chain === "" ? `${source}:${symbol}` : `${source}:${chain}:${symbol}`
-    return { key, source, tag: TAGS[source], symbol, chain, quote, label }
+    return { key, source, tag: TAGS[source], symbol, chain, quote, label, hidden: false }
 }
 
 export function bySource(coins: Coin[], source: Source): Coin[] {
@@ -98,7 +109,7 @@ export function displayName(coin: Coin, quote?: Quote): string {
 
 /** The coin list as text, one entry per line: what `parseCoins` reads back to the same list. */
 export function formatCoins(coins: Coin[]): string {
-    return coins.map(entryOf).join("\n")
+    return coins.map((c) => (c.hidden ? HIDDEN : "") + entryOf(c)).join("\n")
 }
 
 function entryOf(coin: Coin): string {
@@ -135,6 +146,13 @@ export function addCoin(list: string, entry: string): string {
 /** The list without the coin under this key. */
 export function removeCoin(list: string, key: string): string {
     return formatCoins(parseCoins(list).filter((c) => c.key !== key))
+}
+
+/** The list with the coin under this key switched between shown in the panel and hidden from it. */
+export function toggleCoin(list: string, key: string): string {
+    const coins = parseCoins(list)
+    for (const coin of coins) if (coin.key === key) coin.hidden = !coin.hidden
+    return formatCoins(coins)
 }
 
 /** The list with the coin at `from` moved to position `to`; unchanged for positions out of range. */

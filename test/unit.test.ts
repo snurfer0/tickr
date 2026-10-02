@@ -29,6 +29,7 @@ import {
     searchPerps,
     searchSpot,
     shortAddress,
+    toggleCoin,
 } from "../src/index.ts"
 
 const WIF = "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm"
@@ -144,6 +145,21 @@ describe("adding from search", () => {
         expect(moveCoin(list, 1, 1)).toBe(list)
         expect(moveCoin(list, 5, 0)).toBe(list)
         expect(moveCoin(list, 0, 9)).toBe(list)
+    })
+
+    test("hide and show", () => {
+        const list = "BTC\nbinance:ETH/BTC = Ratio\nhl:HYPE"
+        const hidden = toggleCoin(toggleCoin(list, "binance:ETHBTC"), "hl:HYPE")
+        expect(hidden).toBe("BTC\n!binance:ETH/BTC = Ratio\n!hl:HYPE")
+        expect(parseCoins(hidden).map((c) => c.hidden)).toEqual([false, true, true])
+        expect(parseCoins(hidden).map((c) => c.key)).toEqual(parseCoins(list).map((c) => c.key))
+        expect(parseCoins("! hl:HYPE")[0]?.hidden).toBe(true)
+        expect(hasCoin(hidden, "hl:HYPE")).toBe(true)
+        expect(addCoin(hidden, "hl:HYPE")).toBe(hidden)
+        expect(moveCoin(hidden, 2, 0)).toBe("!hl:HYPE\nBTC\n!binance:ETH/BTC = Ratio")
+        expect(removeCoin(hidden, "binance:ETHBTC")).toBe("BTC\n!hl:HYPE")
+        expect(toggleCoin(hidden, "nope")).toBe(hidden)
+        expect(toggleCoin(toggleCoin(hidden, "hl:HYPE"), "binance:ETHBTC")).toBe(list)
     })
 })
 

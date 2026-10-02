@@ -34,6 +34,7 @@ PlasmoidItem {
             // In the panel a perp must not look like the spot price next to it.
             panelLabel: coin.tag === "PERP" && !coin.label ? name + " " + i18n("perp") : name,
             tag: coin.tag,
+            hidden: coin.hidden,
             price: quote ? Tickr.price(quote.price) : "—",
             change: quote ? quote.change : 0,
             changeText: quote ? Tickr.percent(quote.change) : "",
@@ -47,6 +48,7 @@ PlasmoidItem {
         }
     })
     readonly property bool online: rows.some(row => !row.stale)
+    readonly property var panelRows: rows.filter(row => !row.hidden)
 
     function accept(fresh) {
         now = Date.now()
@@ -160,7 +162,7 @@ PlasmoidItem {
         || i18n("Waiting for prices")
 
     compactRepresentation: PanelRow {
-        rows: root.config.panelCount > 0 ? root.rows.slice(0, root.config.panelCount) : root.rows
+        rows: root.config.panelCount > 0 ? root.panelRows.slice(0, root.config.panelCount) : root.panelRows
         vertical: Plasmoid.formFactor === PlasmaCore.Types.Vertical
         showLabel: root.config.showLabel
         showChange: root.config.showChange
@@ -213,14 +215,15 @@ PlasmoidItem {
         noticeAction: updates.status === "available" ? i18n("Update") : updates.status === "installed" ? i18n("Restart Plasma") : ""
         // Grow with the content up to a fixed height, then scroll. The minimum matters: Plasma
         // remembers the popup's last size, and a list that got longer would otherwise be cut off.
-        Layout.minimumWidth: 320
-        Layout.preferredWidth: 360
+        Layout.minimumWidth: 380
+        Layout.preferredWidth: 380
         Layout.minimumHeight: Math.min(implicitHeight, 480)
         Layout.preferredHeight: Math.min(implicitHeight, 480)
         Layout.maximumHeight: 480
         onOpened: url => Qt.openUrlExternally(url)
         onAdded: entry => root.setCoins(Tickr.addCoin(root.config.coins, entry))
         onRemoved: key => root.setCoins(Tickr.removeCoin(root.config.coins, key))
+        onToggled: key => root.setCoins(Tickr.toggleCoin(root.config.coins, key))
         onMoved: (from, to) => root.setCoins(Tickr.moveCoin(root.config.coins, from, to))
         onConfigure: root.openSettings(0)
         onNoticeClicked: updates.status === "available" ? updates.install() : updates.restartPlasma()

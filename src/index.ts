@@ -10,6 +10,7 @@ export {
     moveCoin,
     parseCoins,
     removeCoin,
+    toggleCoin,
 } from "./coins.ts"
 export { DEX_MIN_INTERVAL_S, decodeDex, dexUrls } from "./dexscreener.ts"
 export { funding, percent, price, shortAddress } from "./format.ts"
