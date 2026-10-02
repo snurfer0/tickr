@@ -13,6 +13,7 @@ Tickr puts live crypto prices in the Plasma panel, with a click-to-open list of 
 - Spot prices from Binance, perpetuals with funding from Hyperliquid, and any on-chain token on any
   chain through DexScreener.
 - A search box in the popup finds coins on all three; results show where each price comes from.
+- Keep several lists and switch between them in the popup; the panel shows the one you picked.
 - Drag coins to reorder them, hide them from the panel or remove them with one click.
 - Copycat tokens sink: on-chain results are ranked by real trading volume.
 - Seven colour schemes, any font, size and spacing, with a live preview. Changes apply instantly.

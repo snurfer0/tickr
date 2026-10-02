@@ -9,7 +9,11 @@ PlasmoidItem {
     id: root
 
     readonly property var config: Plasmoid.configuration
-    readonly property var coins: Tickr.parseCoins(config.coins)
+    // The ticker shows and polls one list at a time; the popup switches between them.
+    readonly property var lists: Tickr.parseLists(config.coins)
+    readonly property int active: Math.max(0, Math.min(config.list, lists.length - 1))
+    readonly property string listText: lists[active].coins
+    readonly property var coins: Tickr.parseCoins(listText)
     readonly property int interval: Math.max(3, config.interval)             // seconds
     readonly property int dexInterval: Math.max(interval, Tickr.DEX_MIN_INTERVAL_S)
 
@@ -157,7 +161,7 @@ PlasmoidItem {
     }
 
     Plasmoid.icon: Qt.resolvedUrl("../icons/tickr.svg")
-    toolTipMainText: "Tickr"
+    toolTipMainText: lists.length > 1 ? "Tickr · " + (lists[active].name || i18n("Main")) : "Tickr"
     toolTipSubText: rows.filter(row => row.known).map(row => row.label + "  " + row.price + "  " + row.changeText).join("\n")
         || i18n("Waiting for prices")
 
@@ -182,10 +186,28 @@ PlasmoidItem {
         query: root.fullRepresentationItem ? root.fullRepresentationItem.query : ""
     }
 
-    function setCoins(list) {
-        if (list === config.coins) return
-        config.coins = list
+    function save(text) {
+        if (text === config.coins) return
+        config.coins = text
         if (config.writeConfig) config.writeConfig()
+    }
+    function setCoins(list) { save(Tickr.setListCoins(config.coins, active, list)) }
+    function setActive(index) {
+        if (index === config.list) return
+        config.list = index
+        if (config.writeConfig) config.writeConfig()
+    }
+    function addList(name) {
+        const text = Tickr.addList(config.coins, name)
+        save(text)
+        setActive(Tickr.parseLists(text).length - 1)
+    }
+    // Keeps the same list on show when one before it goes; removing the one on show moves to the next.
+    function removeList(index) {
+        const next = index < active ? active - 1 : active
+        const text = Tickr.removeList(config.coins, index)
+        save(text)
+        setActive(Math.min(next, Tickr.parseLists(text).length - 1))
     }
 
     // Opening the popup puts the cursor in the search box; closing it clears the search.
@@ -197,8 +219,10 @@ PlasmoidItem {
 
     fullRepresentation: CoinList {
         rows: root.rows
+        lists: root.lists.map(list => list.name)
+        active: root.active
         results: search.suggestions.map(hit => Object.assign({}, hit, {
-            added: Tickr.hasCoin(root.config.coins, hit.entry),
+            added: Tickr.hasCoin(root.listText, hit.entry),
             priceText: Tickr.price(hit.price)
         }))
         searching: search.busy
@@ -206,6 +230,7 @@ PlasmoidItem {
         online: root.online
         textColor: Kirigami.Theme.textColor
         highlightColor: Kirigami.Theme.highlightColor
+        backgroundColor: Kirigami.Theme.backgroundColor
         up: root.colors.up
         down: root.colors.down
         fontFamily: root.fontFamily
@@ -221,10 +246,14 @@ PlasmoidItem {
         Layout.preferredHeight: Math.min(implicitHeight, 480)
         Layout.maximumHeight: 480
         onOpened: url => Qt.openUrlExternally(url)
-        onAdded: entry => root.setCoins(Tickr.addCoin(root.config.coins, entry))
-        onRemoved: key => root.setCoins(Tickr.removeCoin(root.config.coins, key))
-        onToggled: key => root.setCoins(Tickr.toggleCoin(root.config.coins, key))
-        onMoved: (from, to) => root.setCoins(Tickr.moveCoin(root.config.coins, from, to))
+        onAdded: entry => root.setCoins(Tickr.addCoin(root.listText, entry))
+        onRemoved: key => root.setCoins(Tickr.removeCoin(root.listText, key))
+        onToggled: key => root.setCoins(Tickr.toggleCoin(root.listText, key))
+        onMoved: (from, to) => root.setCoins(Tickr.moveCoin(root.listText, from, to))
+        onSwitched: index => root.setActive(index)
+        onListAdded: name => root.addList(name)
+        onListRenamed: (index, name) => root.save(Tickr.renameList(root.config.coins, index, name))
+        onListRemoved: index => root.removeList(index)
         onConfigure: root.openSettings(0)
         onNoticeClicked: updates.status === "available" ? updates.install() : updates.restartPlasma()
     }

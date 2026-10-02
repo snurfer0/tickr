@@ -30,7 +30,7 @@ view.resize(620, int(args.pop("height", "720")))
 
 values = {"coins": "BTC, ETH, SOL", "scheme": "classic", "upColor": "#4ade80", "downColor": "#f87171",
           "fontFamily": "", "fontSize": 13, "bold": False, "spacing": 16, "showLabel": True,
-          "showChange": True, "flash": True, "panelCount": 0, "interval": 10,
+          "showChange": True, "flash": True, "panelCount": 0, "list": 0, "interval": 10,
           "checkUpdates": True, "autoUpdate": True, "lastUpdateCheck": "0"}
 section, search = int(args.pop("section", "0")), args.pop("search", None)
 for key, value in args.items():
