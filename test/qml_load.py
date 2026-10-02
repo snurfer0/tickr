@@ -26,6 +26,8 @@ QtObject {
         [{ universe: [{ name: "kPEPE" }] }, [{ midPx: "0.004", prevDayPx: "0.002", funding: "0.00001" }]],
         Tickr.bySource(coins, "hl"))["hl:PEPE"].name
     property string body: Tickr.HYPERLIQUID_BODY
+    property string lists: Tickr.parseLists(Tickr.addList("# [A]\\nBTC, !ETH\\n# [B]\\nhl:PEPE", "C"))
+        .map(l => l.name + "=" + l.coins.split("\\n").join("+")).join(" ")
 }
 """
 EXPECT = {
@@ -37,6 +39,7 @@ EXPECT = {
     "spot": 5.0,
     "perp": "kPEPE",
     "body": '{"type":"metaAndAssetCtxs"}',
+    "lists": "A=BTC+!ETH B=hl:PEPE C=",
 }
 
 app = QCoreApplication(sys.argv[:1])

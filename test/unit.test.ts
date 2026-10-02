@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test"
 import {
     addCoin,
+    addList,
     binanceUrl,
     bySource,
     decodeBinance,
@@ -15,19 +16,24 @@ import {
     dexUrls,
     displayName,
     formatCoins,
+    formatLists,
     funding,
     hasCoin,
     installCommand,
     isNewer,
     moveCoin,
     parseCoins,
+    parseLists,
     percent,
     price,
     removeCoin,
+    removeList,
+    renameList,
     SCHEMES,
     schemeColors,
     searchPerps,
     searchSpot,
+    setListCoins,
     shortAddress,
     toggleCoin,
 } from "../src/index.ts"
@@ -160,6 +166,45 @@ describe("adding from search", () => {
         expect(removeCoin(hidden, "binance:ETHBTC")).toBe("BTC\n!hl:HYPE")
         expect(toggleCoin(hidden, "nope")).toBe(hidden)
         expect(toggleCoin(toggleCoin(hidden, "hl:HYPE"), "binance:ETHBTC")).toBe(list)
+    })
+})
+
+describe("lists", () => {
+    const TEXT = "# [Majors]\nBTC\n!ETH\n# [Memes]\nhl:kPEPE\nBTC"
+
+    test("text without a header is one unnamed list", () => {
+        expect(parseLists("BTC, ETH")).toEqual([{ name: "", coins: "BTC\nETH" }])
+        expect(parseLists("")).toEqual([{ name: "", coins: "" }])
+        expect(formatLists(parseLists("BTC, ETH"))).toBe("BTC\nETH")
+    })
+
+    test("round trip keeps names, order, hidden coins and a coin in two lists", () => {
+        expect(parseLists(TEXT)).toEqual([
+            { name: "Majors", coins: "BTC\n!ETH" },
+            { name: "Memes", coins: "hl:kPEPE\nBTC" },
+        ])
+        expect(formatLists(parseLists(TEXT))).toBe(TEXT)
+        expect(parseLists("SOL\n# [A]\n# [ B] ]\nBTC").map((l) => l.name)).toEqual(["", "A", "B"])
+    })
+
+    test("a version without lists reads every coin once", () => {
+        expect(parseCoins(TEXT).map((c) => c.key)).toEqual(["binance:BTCUSDT", "binance:ETHUSDT", "hl:kPEPE"])
+    })
+
+    test("edits touch one list", () => {
+        expect(setListCoins(TEXT, 1, "SOL")).toBe("# [Majors]\nBTC\n!ETH\n# [Memes]\nSOL")
+        expect(setListCoins(TEXT, 5, "SOL")).toBe(TEXT)
+        expect(renameList(TEXT, 0, " Big [caps] ")).toBe("# [Big  caps]\nBTC\n!ETH\n# [Memes]\nhl:kPEPE\nBTC")
+        expect(removeList(TEXT, 0)).toBe("# [Memes]\nhl:kPEPE\nBTC")
+        expect(removeList(TEXT, 2)).toBe(TEXT)
+    })
+
+    test("add a second list, remove back down to one", () => {
+        const two = addList("BTC, ETH", "Memes")
+        expect(two).toBe("# []\nBTC\nETH\n# [Memes]")
+        expect(parseLists(two).map((l) => l.name)).toEqual(["", "Memes"])
+        expect(removeList(two, 1)).toBe("BTC\nETH")
+        expect(removeList("BTC", 0)).toBe("BTC")
     })
 })
 

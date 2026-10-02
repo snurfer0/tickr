@@ -16,6 +16,7 @@ on-chain token through DexScreener, with a click-to-open list. No account, no AP
 - Click the ticker for a list of your coins; type in its search box to find coins on Binance,
   Hyperliquid and DexScreener at once. On-chain results are ranked by trading volume, so copycat
   tokens sink.
+- Keep several lists and switch between them in the popup; the panel shows the one you picked.
 - Drag a coin to reorder it, × to remove it, the eye to keep it in the list but out of the panel, click it to open its chart.
 - Colour schemes, any installed font, size and spacing, with a live preview. Changes apply instantly.
 - Halted or delisted pairs are marked instead of showing a frozen price.

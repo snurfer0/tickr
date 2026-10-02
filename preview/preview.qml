@@ -35,7 +35,7 @@ Rectangle {
     Rectangle {
         objectName: "popup"
         x: 20; y: 68; width: 380; height: Math.min(coins.implicitHeight, 480); radius: 10; color: "#22252c"
-        CoinList { id: coins; anchors.fill: parent; rows: stage.rows }
+        CoinList { id: coins; anchors.fill: parent; rows: stage.rows; lists: ["Majors", "Memes", "Perps"] }
     }
     Rectangle {
         x: 430; y: 68; width: 380; height: Math.min(found.implicitHeight, 480); radius: 10; color: "#22252c"
